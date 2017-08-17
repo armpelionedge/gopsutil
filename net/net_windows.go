@@ -8,7 +8,7 @@ import (
 	"os"
 	"syscall"
 
-	"github.com/shirou/gopsutil/internal/common"
+	"github.com/WigWagCo/gopsutil/internal/common"
 )
 
 var (

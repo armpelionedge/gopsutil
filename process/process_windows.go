@@ -11,11 +11,11 @@ import (
 	"unsafe"
 
 	"github.com/StackExchange/wmi"
-	"github.com/shirou/w32"
+	"github.com/WigWagCo/w32"
 
-	cpu "github.com/shirou/gopsutil/cpu"
-	"github.com/shirou/gopsutil/internal/common"
-	net "github.com/shirou/gopsutil/net"
+	cpu "github.com/WigWagCo/gopsutil/cpu"
+	"github.com/WigWagCo/gopsutil/internal/common"
+	net "github.com/WigWagCo/gopsutil/net"
 )
 
 const (
