@@ -5,9 +5,9 @@ package process
 import (
 	"syscall"
 
-	"github.com/shirou/gopsutil/cpu"
-	"github.com/shirou/gopsutil/internal/common"
-	"github.com/shirou/gopsutil/net"
+	"github.com/WigWagCo/gopsutil/cpu"
+	"github.com/WigWagCo/gopsutil/internal/common"
+	"github.com/WigWagCo/gopsutil/net"
 )
 
 type MemoryMapsStat struct {

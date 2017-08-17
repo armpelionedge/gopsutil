@@ -5,9 +5,9 @@ import (
 	"runtime"
 	"time"
 
-	"github.com/shirou/gopsutil/cpu"
-	"github.com/shirou/gopsutil/internal/common"
-	"github.com/shirou/gopsutil/mem"
+	"github.com/WigWagCo/gopsutil/cpu"
+	"github.com/WigWagCo/gopsutil/internal/common"
+	"github.com/WigWagCo/gopsutil/mem"
 )
 
 var invoke common.Invoker
