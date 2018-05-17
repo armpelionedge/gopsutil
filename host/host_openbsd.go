@@ -15,8 +15,8 @@ import (
 	"time"
 	"unsafe"
 
-	"github.com/shirou/gopsutil/internal/common"
-	"github.com/shirou/gopsutil/process"
+	"github.com/WigWagCo/gopsutil/internal/common"
+	"github.com/WigWagCo/gopsutil/process"
 )
 
 const (
