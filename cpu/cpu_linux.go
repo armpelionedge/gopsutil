@@ -3,13 +3,14 @@
 package cpu
 
 import (
+	"context"
 	"errors"
 	"fmt"
 	"os/exec"
 	"strconv"
 	"strings"
 
-	"github.com/WigWagCo/gopsutil/internal/common"
+	"github.com/shirou/gopsutil/internal/common"
 )
 
 var cpu_tick = float64(100)
@@ -19,7 +20,7 @@ func init() {
 	if err != nil {
 		return
 	}
-	out, err := invoke.Command(getconf, "CLK_TCK")
+	out, err := invoke.CommandWithContext(context.Background(), getconf, "CLK_TCK")
 	// ignore errors
 	if err == nil {
 		i, err := strconv.ParseFloat(strings.TrimSpace(string(out)), 64)
@@ -30,21 +31,22 @@ func init() {
 }
 
 func Times(percpu bool) ([]TimesStat, error) {
+	return TimesWithContext(context.Background(), percpu)
+}
+
+func TimesWithContext(ctx context.Context, percpu bool) ([]TimesStat, error) {
 	filename := common.HostProc("stat")
 	var lines = []string{}
 	if percpu {
-		var startIdx uint = 1
-		for {
-			linen, _ := common.ReadLinesOffsetN(filename, startIdx, 1)
-			if len(linen) == 0 {
-				break
-			}
-			line := linen[0]
+		statlines, err := common.ReadLines(filename)
+		if err != nil || len(statlines) < 2 {
+			return []TimesStat{}, nil
+		}
+		for _, line := range statlines[1:] {
 			if !strings.HasPrefix(line, "cpu") {
 				break
 			}
 			lines = append(lines, line)
-			startIdx++
 		}
 	} else {
 		lines, _ = common.ReadLinesOffsetN(filename, 0, 1)
@@ -93,6 +95,9 @@ func finishCPUInfo(c *InfoStat) error {
 		return nil
 	}
 	c.Mhz = value / 1000.0 // value is in kHz
+	if c.Mhz > 9999 {
+		c.Mhz = c.Mhz / 1000.0 // value in Hz
+	}
 	return nil
 }
 
@@ -104,10 +109,15 @@ func finishCPUInfo(c *InfoStat) error {
 // For example a single socket board with two cores each with HT will
 // return 4 CPUInfoStat structs on Linux and the "Cores" field set to 1.
 func Info() ([]InfoStat, error) {
+	return InfoWithContext(context.Background())
+}
+
+func InfoWithContext(ctx context.Context) ([]InfoStat, error) {
 	filename := common.HostProc("cpuinfo")
 	lines, _ := common.ReadLines(filename)
 
 	var ret []InfoStat
+	var processorName string
 
 	c := InfoStat{CPU: -1, Cores: 1}
 	for _, line := range lines {
@@ -119,6 +129,8 @@ func Info() ([]InfoStat, error) {
 		value := strings.TrimSpace(fields[1])
 
 		switch key {
+		case "Processor":
+			processorName = value
 		case "processor":
 			if c.CPU >= 0 {
 				err := finishCPUInfo(&c)
@@ -127,7 +139,7 @@ func Info() ([]InfoStat, error) {
 				}
 				ret = append(ret, c)
 			}
-			c = InfoStat{Cores: 1}
+			c = InfoStat{Cores: 1, ModelName: processorName}
 			t, err := strconv.ParseInt(value, 10, 64)
 			if err != nil {
 				return ret, err

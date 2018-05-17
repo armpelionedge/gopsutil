@@ -3,14 +3,10 @@ package load
 import (
 	"encoding/json"
 
-	"github.com/WigWagCo/gopsutil/internal/common"
+	"github.com/shirou/gopsutil/internal/common"
 )
 
-var invoke common.Invoker
-
-func init() {
-	invoke = common.Invoke{}
-}
+var invoke common.Invoker = common.Invoke{}
 
 type AvgStat struct {
 	Load1  float64 `json:"load1"`

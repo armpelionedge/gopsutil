@@ -3,14 +3,10 @@ package disk
 import (
 	"encoding/json"
 
-	"github.com/WigWagCo/gopsutil/internal/common"
+	"github.com/shirou/gopsutil/internal/common"
 )
 
-var invoke common.Invoker
-
-func init() {
-	invoke = common.Invoke{}
-}
+var invoke common.Invoker = common.Invoke{}
 
 type UsageStat struct {
 	Path              string  `json:"path"`
@@ -46,6 +42,7 @@ type IOCountersStat struct {
 	WeightedIO       uint64 `json:"weightedIO"`
 	Name             string `json:"name"`
 	SerialNumber     string `json:"serialNumber"`
+	Label            string `json:"label"`
 }
 
 func (d UsageStat) String() string {
